@@ -16,7 +16,7 @@ source("TwoStage_est_fct.R")
 source("prepare_param_sim.R")
 source("TwoStage_inference_fct.R")
 
-
+# Test Data configuration
 nsample=2000; Jtype=2; KJjoint=2
 gam2=c(0.5,0.5)
 prob.g=0.1

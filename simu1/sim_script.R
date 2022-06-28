@@ -17,13 +17,13 @@ source("prepare_param_sim.R")
 source("TwoStage_inference_fct.R")
 
 
-# script function for simulation studies, include:
-# 1. data generation
-# 2. estimation and inference
-# 3. record results in .dat files
-ts.script.f <- function(nsim, nsample, Jtype, KJjoint, gam2, prob.g,
-                        pi.marg.j, visit.rate, pair.asso.type,gene.effect.type,
-                        delta, s2.num.cores, ase.num.cores){
+nsample=2000; Jtype=2; KJjoint=2
+gam2=c(0.5,0.5)
+prob.g=0.1
+pi.marg.j=c(0.65,0.75); visit.rate=20
+pair.asso.type="jjp"; gene.effect.type="common"
+delta=1e-03; 
+s2.num.cores = ase.num.cores=2
   
   param.res.list <- param.gen.f(Jtype=Jtype, KJjoint=KJjoint, prob.g=prob.g,
                                 pi.marg.j=pi.marg.j, gam2=gam2)
@@ -35,59 +35,8 @@ ts.script.f <- function(nsim, nsample, Jtype, KJjoint, gam2, prob.g,
   
   Rj_vec <- unlist(lapply(1:length(FT.param.list$brks.list),function(j){length(FT.param.list$brks.list[[j]])+1}))
   
-  file.tx <- paste("2stg.n",nsample, "J",Jtype,"K", KJjoint, 
-                   "gam21", gam2[1], "gam22", gam2[2],
-                   "prob.g",prob.g, "pi1", pi.marg.j[1], "pi2", pi.marg.j[2],
-                   gene.effect.type,
-                   pair.asso.type, visit.rate,
-                   sep="_")
-  
-  # file record for stage I estimation
-  s1.out <- paste("s1.", as.character(file.tx), ".dat", sep="")
-  if ( file.exists(s1.out) ) { unlink(s1.out) }
-  
-  # file record for stage II estimation
-  s2.out <- paste("s2.", as.character(file.tx), ".dat", sep="")
-  if ( file.exists(s2.out) ) { unlink(s2.out) }
-  
-  if(gene.effect.type=="common"){
-    cat("nsim sec", paste0("logalp", rep(1:Jtype, Rj_vec), unlist(lapply(1:Jtype, function(j){
-      1:Rj_vec[j] }))), paste0("gam0",1:Jtype), paste0("gam",1:Jtype),
-      paste0("ASE.logalp", rep(1:Jtype, Rj_vec), unlist(lapply(1:Jtype, function(j){
-        1:Rj_vec[j] }))), paste0("ASE.gam0",1:Jtype), paste0("ASE.gam",1:Jtype),
-      "\n", sep=" ", append=T, file=s1.out)
-  
-    }else if(gene.effect.type=="block"){
-    cat("nsim sec", paste0("logalp", rep(1:Jtype, Rj_vec), unlist(lapply(1:Jtype, function(j){
-      1:Rj_vec[j] }))), paste0("gam0",1:Jtype), "gam1", paste0("gam2",1:Jtype),
-      paste0("ASE.logalp", rep(1:Jtype, Rj_vec), unlist(lapply(1:Jtype, function(j){
-        1:Rj_vec[j] }))), paste0("ASE.gam0",1:Jtype), "ASE.gam1", paste0("ASE.gam2",1:Jtype),
-      "\n", sep=" ", append=T, file=s1.out)
-  }  
-  
-  
-  if(pair.asso.type=="jjp"){
-    
-    jjp.mat <- unique(t(combn(rep(1:Jtype,each=KJjoint),2)))
-    cat("nsim sec", 
-        paste0(rep(c("tan_pi/2sigma", "eta"),dim(jjp.mat)[1]), rep(paste0(jjp.mat[,1],jjp.mat[,2]),each=2)),
-        paste0(rep(c("ASE.tan_pi/2sigma", "ASE.eta"),dim(jjp.mat)[1]), rep(paste0(jjp.mat[,1],jjp.mat[,2]),each=2)),
-        "\n", sep=" ", append=T, file=s2.out)
-  }else if(pair.asso.type=="common"){
-    cat("nsim sec tan_pi/2sigma eta",
-        "ASE.tan_pi/2sigma ASE.eta",
-        "\n", sep=" ", append=T, file=s2.out)
-  }else if(pair.asso.type=="full"){
-    
-    cat("nsim sec", paste0("tan_pi/2sigma", t(combn(1:(Jtype*KJjoint),2))[,1],t(combn(1:(Jtype*KJjoint),2))[,2]),
-        paste0("eta", t(combn(1:(Jtype*KJjoint),2))[,1],t(combn(1:(Jtype*KJjoint),2))[,2]),
-        "\n", sep=" ", append=T, file=s2.out)
-  }
-  
-  
-  for(sim in 1:nsim){
-    
-    set.seed(sim)
+    m=1
+    set.seed(m)
     t.begin <- Sys.time()
     t_pre_data_start <- Sys.time()
     # generate data 
@@ -145,27 +94,6 @@ ts.script.f <- function(nsim, nsample, Jtype, KJjoint, gam2, prob.g,
     print(est.asvar)
     est.ase.ts <- sqrt(diag(est.asvar)) 
     
-    cat(sim, round(difftime(t_res_s1_stop, t_res_s1_start, units = "sec"),2), 
-        res_s1$res$estimate, est.ase.ts[(1:(sum(Rj_vec)+Jtype+2))],
-        "\n", sep=" ", append=T, file=s1.out)
-    
-    cat(sim, round(difftime(t_res_s2_stop, t_res_s2_start, units = "sec"),2),
-        res_s2$res$estimate,
-        est.ase.ts[-(1:(sum(Rj_vec)+Jtype+2))],
-        "\n", sep=" ", append=T, file=s2.out)
-  }
-  
   t.end <- Sys.time()
   print(t.end)
   
-}
-
-
-# test
-ts.script.f(nsim=10, nsample=2000, Jtype=2, KJjoint=2, 
-            gam2=c(0.5,0.5),
-            prob.g=0.1,
-            pi.marg.j=c(0.65,0.75), visit.rate=20,
-            pair.asso.type="jjp", gene.effect.type="common",
-            delta=1e-03, s2.num.cores = 2,ase.num.cores=2)
-

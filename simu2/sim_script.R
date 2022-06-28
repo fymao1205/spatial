@@ -18,13 +18,6 @@ source("dataGen_fct.R")
 source("est_fct.R")
 source("ts_inference_fct.R")
 
-
-# script function for simulation studies, include:
-# 1. data generation
-# 2. estimation and inference
-# 3. record results in .dat files
-
-
 # Data configuration 
 nsample=2000
 prob.g=0.05; prob.x=0.45

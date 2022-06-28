@@ -18,7 +18,7 @@ source("dataGen_fct.R")
 source("est_fct.R")
 source("ts_inference_fct.R")
 
-# Data configuration 
+# Test Data configuration 
 nsample=2000
 prob.g=0.05; prob.x=0.45
 K1=2; K2=K3=6

@@ -1,7 +1,7 @@
 # Introduction 
 
 This is a repository containing the R code for simulation studies conducted in the project "Spatial Dependence Modeling". 
-There are two set of R codes, namely sim1 and sim2, corresponding to each simulations tudy, respectively. 
+There are two set of R codes, namely sim1 and sim2, corresponding to each simulations study, respectively. 
 
 ## sim1
 

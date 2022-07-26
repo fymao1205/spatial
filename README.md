@@ -11,7 +11,7 @@ likelihood function for estimation and inference purposes are included in loglik
 
 dataGen_fct.R: functions for simulating data sets;
 
-sim_script.R: the running script for generating results presented in Table 2 and Web Table 1. 
+sim_script.R: the running script for generating results presented in Table 2 and Web Table 1. It displays the flow of a simulation run: 1) specifying the parameter settings; 2) solving for unknown parameters; 3) generating a dataset; 4) implement stage I estimation; and 5) implemente stage II estimation. 
 
 
 ## sim2

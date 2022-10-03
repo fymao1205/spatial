@@ -84,7 +84,7 @@ double ppwc_double(double q, NumericVector cuts, NumericVector levels, int lower
 {
   double y;
   if (cuts[0]==0) {
-    y = R::pexp(q, 1/levels[0], 0.0, 0.0);
+    y = R::pexp(q, 1/levels[0], lower, logInd);
   }else{
     //NumericVector qq(1);
     //qq[0] = q;

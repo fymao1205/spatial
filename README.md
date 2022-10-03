@@ -25,7 +25,7 @@ TwoStage_est_fct.R, TwoStage_inference_fct.R: functions for estimation and infer
 sim_script.R: the running script for generating results presented in Table 3. Similarly, it presents the flow of a simulation run: 1) specifying the parameter settings; 2) solving for unknown parameters; 3) generating a dataset; 4) implement the two-stage estimation procedure and 5) conduct the inference on parameters of interest. 
 
 
-## PseudoScoreTest.R
+## for_pseudo_score_test_fct.R
 
 Functions for conducting pseudo-score tests based on working independence composite likelihoods. 
 
